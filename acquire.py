@@ -145,15 +145,115 @@ def get_sales(base_url):
 
 # Writing to csv:
 
+# Writing to a csv:
+
 def write_csv(df, csv_name):
+    '''
+    The first argument (df) is the dataframe you want written to a .csv file. 
+    The second argument (csv_name) must be a string, including the .csv extention. eg: 'example_df.csv'
+    '''
+    
     df.to_csv(csv_name, index = False)
     print('Completed writing df to .csv file')
 
 
 
+# Creating the items function:
+
+def get_items_new(base_url):
+    '''
+    This function is designed to get the items data from Zach's web service and turn that data into a pandas
+    dataframe for use.
+    '''
+    
+    # initialize:
+    
+    response = requests.get('https://python.zach.lol/api/v1/items')
+    data = response.json()
+    df = pd.DataFrame(data['payload']['items'])
+    
+    
+    
+    for x in range(0, data['payload']['max_page']):
+        response = requests.get(base_url + data['payload']['next_page'])
+        data = response.json()
+        df = pd.concat([df, pd.DataFrame(data['payload']['items'])], ignore_index = True)
+        if data['payload']['next_page'] == None:
+            return df
+    df = df.reset_index()
+    return df
+
+# stores function:
+
+def get_stores_new(base_url):
+    '''
+    This function is designed to get the items data from Zach's web service and turn that data into a pandas
+    dataframe for use.
+    '''
+    
+    # initialize:
+    
+    response = requests.get('https://python.zach.lol/api/v1/stores')
+    data = response.json()
+    df = pd.DataFrame(data['payload']['stores'])
+    
+    
+    if data['payload']['next_page'] == None:
+        return df
+    else:
+        for x in range(0, data['payload']['max_page']):
+            response = requests.get(base_url + data['payload']['next_page'])
+            data = response.json()
+            df = pd.concat([df, pd.DataFrame(data['payload']['stores'])], ignore_index = True)
+        return df
+    df = df.reset_index()
+    return df
 
 
+# Sales function:
+# Thanks to Ryvyn and Corey for help!
 
+def get_sales(base_url):
 
+    '''
+    This function is designed to get the items data from Zach's web service and turn that data into a pandas
+    dataframe for use.
+    '''
+    
+    response = requests.get('https://python.zach.lol/api/v1/sales')
+    data = response.json()
+    data.keys()
+    print('max_page: %s' % data['payload']['max_page'])
+    print('next_page: %s' % data['payload']['next_page'])
+    
+    df_sales = pd.DataFrame(data['payload']['sales'])
+    
+    while data['payload']['next_page'] != "None":
+        response = requests.get(base_url + data['payload']['next_page'])
+        data = response.json()
+        print('max_page: %s' % data['payload']['max_page'])
+        print('next_page: %s' % data['payload']['next_page'])
+        
+        
+        df_sales = pd.concat([df_sales, pd.DataFrame(data['payload']['sales'])])
+        
+        if data['payload']['next_page'] == None:
+            break
+            
+    df_sales = df_sales.reset_index()
+    print('full_shape', df_sales.shape)
+    return df_sales
+    
+
+# Getting power data function:
+
+def get_germany_power(power_url):
+    df = pd.DataFrame()
+    df = pd.read_csv(power_url, ',')
+    
+    # now the cleaning:
+    df.rename(columns = {"Date": 'date', "Consumption": "consumption", "Wind": "wind", "Solar": "solar", "Wind+Solar": "wind_solar"}, inplace = True)
+    
+    return df 
 
 print('End of file.')
