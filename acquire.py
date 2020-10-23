@@ -14,6 +14,9 @@ import seaborn as sns
 # Importing the os library specifically for reading the csv once I've created the file in my working directory.
 import os
 
+# web-based requests
+import requests
+
 # Make a function named get_titanic_data that returns the titanic data from the codeup data science database as a pandas data frame. Obtain your data from the Codeup Data Science Database.
 
 # Setting up the user credentials:
