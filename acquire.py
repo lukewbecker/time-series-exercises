@@ -163,7 +163,7 @@ def write_csv(df, csv_name):
 
 # Creating the items function:
 
-def get_items_new(base_url):
+def get_items_data(base_url):
     '''
     This function is designed to get the items data from Zach's web service and turn that data into a pandas
     dataframe for use.
@@ -188,7 +188,7 @@ def get_items_new(base_url):
 
 # stores function:
 
-def get_stores_new(base_url):
+def get_stores_data(base_url):
     '''
     This function is designed to get the items data from Zach's web service and turn that data into a pandas
     dataframe for use.
@@ -216,7 +216,7 @@ def get_stores_new(base_url):
 # Sales function:
 # Thanks to Ryvyn and Corey for help!
 
-def get_sales(base_url):
+def get_sales_data(base_url):
 
     '''
     This function is designed to get the items data from Zach's web service and turn that data into a pandas
