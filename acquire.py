@@ -163,12 +163,15 @@ def write_csv(df, csv_name):
 
 # Creating the items function:
 
-def get_items_data(base_url):
+def get_items_data():
     '''
     This function is designed to get the items data from Zach's web service and turn that data into a pandas
     dataframe for use.
     '''
     
+    base_url = 'https://python.zach.lol'
+
+
     # initialize:
     
     response = requests.get('https://python.zach.lol/api/v1/items')
@@ -188,12 +191,14 @@ def get_items_data(base_url):
 
 # stores function:
 
-def get_stores_data(base_url):
+def get_stores_list():
     '''
     This function is designed to get the items data from Zach's web service and turn that data into a pandas
     dataframe for use.
     '''
     
+    base_url = 'https://python.zach.lol'
+
     # initialize:
     
     response = requests.get('https://python.zach.lol/api/v1/stores')
@@ -216,13 +221,15 @@ def get_stores_data(base_url):
 # Sales function:
 # Thanks to Ryvyn and Corey for help!
 
-def get_sales_data(base_url):
+def get_sales_data():
 
     '''
     This function is designed to get the items data from Zach's web service and turn that data into a pandas
     dataframe for use.
     '''
     
+    base_url = 'https://python.zach.lol'
+
     response = requests.get('https://python.zach.lol/api/v1/sales')
     data = response.json()
     data.keys()
@@ -248,9 +255,42 @@ def get_sales_data(base_url):
     return df_sales
     
 
+# Combining everything in acquire together into one function:
+
+def get_store_data():
+    '''
+    This function will pull all the store, item and sales data from Zach's web service pages.
+    This function should be the basis of where to start the prep phase.
+    '''
+    
+    base_url = 'https://python.zach.lol'
+    
+    # Calling the dataframes. I need to put in a cache = True argument somewhere so it doesn't always have to be 
+    # pulling from Zach's web service. I think I can put that in here but I don't recall how that works.
+    
+    item_list = get_items_data()
+    store_list = get_stores_list()
+    sales_list = get_sales_data()
+    
+    # renaming columns:
+    items_list.rename(columns = {'item_id': 'item'}, inplace = True)
+    stores_df.rename(columns = {'store_id': 'store'}, inplace = True)
+    
+    
+    # Merging the three dataframes:
+    left_merge = pd.merge(sales_list, items_list, how = 'left', on = 'item')
+    all_df = pd.merge(left_merge, store_list, how = 'left', on = 'store')
+    
+    return all_df
+
+
+
 # Getting power data function:
 
-def get_germany_power(power_url):
+def get_germany_power():
+
+    power_url = 'https://raw.githubusercontent.com/jenfly/opsd/master/opsd_germany_daily.csv'
+
     df = pd.DataFrame()
     df = pd.read_csv(power_url, ',')
     
