@@ -47,25 +47,25 @@ def get_items_data():
     This function is designed to get the items data from Zach's web service and turn that data into a pandas
     dataframe for use.
     '''
-    
     base_url = 'https://python.zach.lol'
-
-
+    
     # initialize:
     
     response = requests.get('https://python.zach.lol/api/v1/items')
     data = response.json()
     df = pd.DataFrame(data['payload']['items'])
     
-    
-    
-    for x in range(0, data['payload']['max_page']):
-        response = requests.get(base_url + data['payload']['next_page'])
-        data = response.json()
-        df = pd.concat([df, pd.DataFrame(data['payload']['items'])], ignore_index = True)
-        if data['payload']['next_page'] == None:
-            return df
-    df = df.reset_index()
+    if os.path.isfile('items_df.csv'):
+        df = pd.read_csv('items_df.csv', index_col = 0)
+    else:
+        for x in range(0, data['payload']['max_page']):
+            response = requests.get(base_url + data['payload']['next_page'])
+            data = response.json()
+            df = pd.concat([df, pd.DataFrame(data['payload']['items'])], ignore_index = True)
+            if data['payload']['next_page'] == None:
+                return df
+        df = df.reset_index()
+        
     return df
 
 # stores function:
@@ -77,23 +77,25 @@ def get_stores_list():
     '''
     
     base_url = 'https://python.zach.lol'
-
+    
     # initialize:
     
     response = requests.get('https://python.zach.lol/api/v1/stores')
     data = response.json()
     df = pd.DataFrame(data['payload']['stores'])
     
-    
-    if data['payload']['next_page'] == None:
-        return df
+    if os.path.isfile('stores_df.csv'):
+        df = pd.read_csv('stores_df.csv', index_col = 0)
     else:
-        for x in range(0, data['payload']['max_page']):
-            response = requests.get(base_url + data['payload']['next_page'])
-            data = response.json()
-            df = pd.concat([df, pd.DataFrame(data['payload']['stores'])], ignore_index = True)
-        return df
-    df = df.reset_index()
+        if data['payload']['next_page'] == None:
+            return df
+        else:
+            for x in range(0, data['payload']['max_page']):
+                response = requests.get(base_url + data['payload']['next_page'])
+                data = response.json()
+                df = pd.concat([df, pd.DataFrame(data['payload']['stores'])], ignore_index = True)
+            return df
+        df = df.reset_index()
     return df
 
 
@@ -101,14 +103,9 @@ def get_stores_list():
 # Thanks to Ryvyn and Corey for help!
 
 def get_sales_data():
-
-    '''
-    This function is designed to get the items data from Zach's web service and turn that data into a pandas
-    dataframe for use.
-    '''
     
     base_url = 'https://python.zach.lol'
-
+    
     response = requests.get('https://python.zach.lol/api/v1/sales')
     data = response.json()
     data.keys()
@@ -117,19 +114,23 @@ def get_sales_data():
     
     df_sales = pd.DataFrame(data['payload']['sales'])
     
-    while data['payload']['next_page'] != "None":
-        response = requests.get(base_url + data['payload']['next_page'])
-        data = response.json()
-        print('max_page: %s' % data['payload']['max_page'])
-        print('next_page: %s' % data['payload']['next_page'])
-        
-        
-        df_sales = pd.concat([df_sales, pd.DataFrame(data['payload']['sales'])])
-        
-        if data['payload']['next_page'] == None:
-            break
-            
-    df_sales = df_sales.reset_index()
+    
+    if os.path.isfile('sales_df.csv'):
+        df = pd.read_csv('sales_df.csv', index_col = 0)
+    else:
+        while data['payload']['next_page'] != "None":
+            response = requests.get(base_url + data['payload']['next_page'])
+            data = response.json()
+            print('max_page: %s' % data['payload']['max_page'])
+            print('next_page: %s' % data['payload']['next_page'])
+
+
+            df_sales = pd.concat([df_sales, pd.DataFrame(data['payload']['sales'])])
+
+            if data['payload']['next_page'] == None:
+                break
+
+        df_sales = df_sales.reset_index()
     print('full_shape', df_sales.shape)
     return df_sales
     
