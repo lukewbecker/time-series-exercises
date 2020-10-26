@@ -162,6 +162,9 @@ def get_store_data():
     left_merge = pd.merge(sales_list, item_list, how = 'left', on = 'item')
     all_df = pd.merge(left_merge, store_list, how = 'left', on = 'store')
     
+    all_df.to_csv('store_data.csv', index = False)
+
+
     return all_df
 
 
