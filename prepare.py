@@ -27,7 +27,7 @@ import acquire
 
 # Main prep function, which works from my acquire file to just prior to splitting the data. Does not include any visualizations:
 
-def prep_data():
+def prep_store_data():
     '''
     No inputs required for this function.
     This prepare function takes the data and bridges the prepare stage steps from my acquire file to just prior to splitting the data. 
