@@ -47,18 +47,27 @@ def prep_store_data():
     
     # Changing the sale_date column to datetime type. Note the shrftime formatting:
     df.sale_date = pd.to_datetime(df.sale_date, format='%a, %d %b %Y %H:%M:%S %Z')
+    print('Reformatted dates correctly')
     
     # I am running the sale_amount and item_price viz in a separate function.
     
     # Set the index to be the datetime variable:
     df = df.set_index('sale_date').sort_index()
+    print('Set dates as index')
     
     # Adding a 'month' and 'day of week' columns:
     df["month"] = df.index.month
     df['day'] = df.index.day_name()
+        
+    # renaming columns:
+    df = df.rename(columns = {'sale_amount': 'quantity'})
     
     # Adding column for sales_total, which is the total order: total items * item price.
-    df['sales_total'] = (df.sale_amount) * (df.item_price)
+    df['sales_total'] = (df.quantity) * (df.item_price)
+    
+    # Plotting the histograms
+    df[['quantity', 'item_price']].hist()
+    plt.show()
     
     return df
 
@@ -74,6 +83,7 @@ def prep_ops():
     
     # Setting the date as the index:
     ops_df = ops_df.set_index('date').sort_index()
+
     
     # Visulizing the columns:
     for col in ops_df.columns:
@@ -83,11 +93,12 @@ def prep_ops():
         plt.show()
     
     # Adding month and year columns:
+    ops_df['month'] = ops_df.index.day
     ops_df['month'] = ops_df.index.month
     ops_df['year'] = ops_df.index.year
     
     # filling missing values:
-    ops_df.fillna(0)
+    ops_df = ops_df.fillna(0)
     
     return ops_df
 
