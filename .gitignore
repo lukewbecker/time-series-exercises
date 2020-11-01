@@ -1,5 +1,6 @@
 .ipynb_checkpoints/
 env.py
+tarkov_env.py
 .DS_Store
 __pycache__
 .vscode/
