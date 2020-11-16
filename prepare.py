@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
+# splitting data:
+from sklearn.model_selection import train_test_split
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTransformer, RobustScaler, MinMaxScaler
+
 # Importing the os library specifically for reading the csv once I've created the file in my working directory.
 import os
 
@@ -101,4 +106,18 @@ def prep_ops():
     ops_df = ops_df.fillna(0)
     
     return ops_df
+
+
+# Splitting the data:
+
+    # split dataset
+def split_data(df):
+    '''
+    This function will split a dataframe into 3 dataframes: train, validate and test.
+    The random state is set to 123 by default, the validate test_size argument is set to .2, and the test test_size is set to .3.
+    '''
+    train_validate, test = train_test_split(df, test_size = .2, random_state = 123)
+    train, validate = train_test_split(train_validate, test_size = .3, random_state = 123)
+    return train, validate, test
+    print(train.shape, validate.shape, test.shape)
 
